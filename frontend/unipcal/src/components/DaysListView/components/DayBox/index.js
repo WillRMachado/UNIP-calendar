@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { AccountCircle } from "@mui/icons-material";
+import axios from "axios";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -38,8 +39,19 @@ function DebounceInput(props) {
 export default function index({ day }) {
   const items = [1, 2, 3, 4, 5];
 
-  const handleChange = (value, field) => {
+  const handleChange = async (value, field) => {
     console.log({ value, field, day });
+
+    try {
+      const a = await axios.post("http://localhost:10000/eventos", {
+        value,
+        field,
+        day,
+      });
+      console.log({ a });
+
+
+    } catch (error) {}
   };
   return (
     <>
