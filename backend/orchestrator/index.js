@@ -10,7 +10,7 @@ app.use(cors());
 
 const saveReminder = (newReminder) => {
   const a = eventos.findIndex((e) => e.number === newReminder.day.number);
-  console.log({a})
+  console.log({ a });
 };
 
 // PLrGm1BMmvLJ5MIU
@@ -42,8 +42,13 @@ app.post("/eventos", async (req, res) => {
   //   res.send({ msg: "ok" });
 });
 
-app.get("/eventos", (req, res) => {
-  res.send(eventos);
+app.get("/list-reminders", async (req, res) => {
+  try {
+    const resp = await axios.get("http://localhost:10001/list-reminders");
+
+    res.json(resp.data);
+  } catch (error) {}
+  //   res.send(eventos);
 });
 
 app.listen(10000, () => console.log("Barramento de eventos. Porta 10000."));

@@ -39,6 +39,9 @@ function DebounceInput(props) {
 export default function index({ day }) {
   const items = [1, 2, 3, 4, 5];
 
+
+  console.log({ day });
+
   const handleChange = async (value, field) => {
     console.log({ value, field, day });
 
@@ -55,7 +58,7 @@ export default function index({ day }) {
   };
   return (
     <>
-      <Item sx={{ padding: 2, margin: 2 }}>{`dia: ${day.number}`}</Item>
+      <Item sx={{ padding: 2, margin: 2 }}>{`dia: ${day.dayNumber}`}</Item>
       {items.map((item, index) => (
         <Box
           sx={{

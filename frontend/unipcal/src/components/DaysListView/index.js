@@ -1,20 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid2 as Grid, Paper, TextField, Box } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { AccountCircle } from "@mui/icons-material";
+import { Grid2 as Grid } from "@mui/material";
 import DayBox from "./components/DayBox";
 import axios from "axios";
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-  }),
-}));
 export default function DaysListView() {
   const [days, setDays] = useState([]);
 
@@ -23,9 +11,17 @@ export default function DaysListView() {
   };
   const fetchReminders = async () => {
     try {
-      const resp = await axios.get("http://localhost:10000/eventos");
-      updateDayList(resp.data);
-      console.log({ resp });
+      const resp = await axios.get("http://localhost:10000/list-reminders");
+      const result = resp.data;
+
+      const allDays = result.map((item) => {
+        return item.dayNumber;
+      });
+
+      const allUniqueDays = [...new Set(allDays)]//.map(item=>{return{dayNumber:item}});
+
+      console.log({ allUniqueDays });
+      updateDayList(allUniqueDays);
     } catch (error) {}
   };
   useEffect(() => {

@@ -4,48 +4,56 @@ app.use(express.json());
 const axios = require("axios");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { MongoClient, ServerApiVersion } = require("mongodb");
-require('dotenv').config()
-
+require("dotenv").config();
+const Reminder = require("./schemas/reminders.js");
 app.use(cors());
 
-// const uri =
-//   "mongodb+srv://willrmtech:PLrGm1BMmvLJ5MIU@cluster0.7fiok.mongodb.net/unipcal?retryWrites=true&w=majority&appName=Cluster0";
+const PORT = 10001;
 
+const { DB_USER, DB_PASS } = process.env;
 
-const { DB_USER, DB_PASS} = process.env
+const uri = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.7fiok.mongodb.net/unipcal?retryWrites=true&w=majority&appName=Cluster0`;
 
-const uri =
-  `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.7fiok.mongodb.net/unipcal?retryWrites=true&w=majority&appName=Cluster0`;
-
-async function run() {
+async function saveEvent() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
     await mongoose.connect(uri);
-
-    const Cat = mongoose.model("Cat2a", { name: String });
-
-    const kitty = new Cat({ name: "Zildjian" });
-    kitty.save().then(() => console.log("meow"));
+    const newReminder = new Reminder({
+      dayNumber: 28,
+      monthNumber: 10,
+      yearNumber: 2023,
+      reminderText: "Teste",
+    });
+    await newReminder.save();
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+    mongoose.connection.close();
   }
 }
 
-// PLrGm1BMmvLJ5MIU
+const listReminders = async () => {
+  try {
+    await mongoose.connect(uri);
+    const reminders = await Reminder.find();
+    return reminders;
+  } catch (error) {
+  } finally {
+    console.log("call");
+    mongoose.connection.close();
+  }
+};
 
-app.post("/eventos", async (req, res) => {
+app.post("/list-reminders", async (req, res) => {
   console.log({ req });
+  saveEvent();
 });
 
-app.get("/eventos", (req, res) => {
+app.get("/list-reminders", async (req, res) => {
   // res.send(eventos);
-  run();
+  const reminders = await listReminders();
+  console.log({ reminders });
+  res.json(reminders);
 });
 
-app.listen(10001, () => console.log("Barramento de eventos. Porta 10000."));
+app.listen(PORT, () => console.log(`Barramento de eventos. Porta ${PORT}.`));
