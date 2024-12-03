@@ -14,19 +14,31 @@ const { DB_USER, DB_PASS } = process.env;
 
 const uri = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.7fiok.mongodb.net/unipcal?retryWrites=true&w=majority&appName=Cluster0`;
 
-async function saveEvent() {
+async function saveEvent(event) {
   try {
+    console.log({ event, b: event.day.reminders });
     await mongoose.connect(uri);
-    const newReminder = new Reminder({
-      dayNumber: 28,
-      monthNumber: 10,
-      yearNumber: 2023,
-      reminderText: "Teste",
-    });
-    await newReminder.save();
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
+    const reminder = Reminder;
+
+    const a = await reminder.findOneAndUpdate(
+      { dayNumber: event.day.dayNumber },
+      { reminders: [...event.day.reminders, event.value] },
+      { returnOriginal: false }
     );
+
+    const resultFinal = await listReminders()
+    console.log({ a });
+    return resultFinal;
+    // const newReminder = new Reminder({
+    //   dayNumber: 28,
+    //   monthNumber: 10,
+    //   yearNumber: 2023,
+    //   reminderText: "Teste",
+    // });
+    // await newReminder.save();
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     mongoose.connection.close();
   }
@@ -46,11 +58,12 @@ const listReminders = async () => {
 
 app.post("/list-reminders", async (req, res) => {
   console.log({ req });
-  saveEvent();
+  const result = await saveEvent(req.body);
+  console.log({ result });
+  res.send(result);
 });
 
 app.get("/list-reminders", async (req, res) => {
-  // res.send(eventos);
   const reminders = await listReminders();
   console.log({ reminders });
   res.json(reminders);

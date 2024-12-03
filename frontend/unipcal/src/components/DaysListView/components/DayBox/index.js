@@ -34,12 +34,10 @@ function DebounceInput(props) {
     }, debounceTimeout);
   };
 
-  return <TextField {...other} onChange={handleChange} />;
+  console.log({ props });
+  return <TextField {...other} value={props.item} onChange={handleChange} />;
 }
-export default function index({ day }) {
-  const items = [1, 2, 3, 4, 5];
-
-
+export default function index({ day, cbUpdateReminders }) {
   console.log({ day });
 
   const handleChange = async (value, field) => {
@@ -51,15 +49,15 @@ export default function index({ day }) {
         field,
         day,
       });
+
+      cbUpdateReminders(a.data);
       console.log({ a });
-
-
     } catch (error) {}
   };
   return (
     <>
       <Item sx={{ padding: 2, margin: 2 }}>{`dia: ${day.dayNumber}`}</Item>
-      {items.map((item, index) => (
+      {day.reminders.map((item, index) => (
         <Box
           sx={{
             display: "flex",
@@ -71,9 +69,24 @@ export default function index({ day }) {
           <DebounceInput
             debounceTimeout={1000}
             handleDebounce={(value) => handleChange(value, index)}
+            item={item}
           />
         </Box>
       ))}
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+        <DebounceInput
+          debounceTimeout={1000}
+          handleDebounce={(value) => handleChange(value, index)}
+        />
+      </Box>
     </>
   );
 }

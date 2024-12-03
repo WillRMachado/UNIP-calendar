@@ -8,21 +8,19 @@ const eventos = [{ number: 28 }];
 
 app.use(cors());
 
-const saveReminder = (newReminder) => {
-  const a = eventos.findIndex((e) => e.number === newReminder.day.number);
-  console.log({ a });
+const saveReminder = async (event) => {
+  const response = await axios.post("http://localhost:10001/list-reminders", event);
+
+
+  return response.data
 };
 
 // PLrGm1BMmvLJ5MIU
 
 app.post("/eventos", async (req, res) => {
-  console.log({ req });
   const evento = req.body;
-  //   eventos.push(evento);
-
-  saveReminder(evento);
-  console.log({ evento });
-  res.json({ eventos });
+  const result = await saveReminder(evento);
+  res.json(result);
   //envia o evento para o microsserviço de lembretes
   //   try {
   //     await axios.post("http://localhost:4000/eventos", evento);

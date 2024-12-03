@@ -6,5 +6,6 @@ var remindersSchema = new Schema({
    monthNumber:Number,
    yearNumber:Number,
    reminderText:String,
+   reminders:[String],
 });
 module.exports = mongoose.model('reminders', remindersSchema);  

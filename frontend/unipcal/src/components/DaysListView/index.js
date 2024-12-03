@@ -6,7 +6,8 @@ import axios from "axios";
 export default function DaysListView() {
   const [days, setDays] = useState([]);
 
-  const updateDayList = (NewDayList) => {
+  const cbUpdateReminders = (NewDayList) => {
+    console.log({ NewDayList });
     setDays(NewDayList);
   };
   const fetchReminders = async () => {
@@ -14,14 +15,7 @@ export default function DaysListView() {
       const resp = await axios.get("http://localhost:10000/list-reminders");
       const result = resp.data;
 
-      const allDays = result.map((item) => {
-        return item.dayNumber;
-      });
-
-      const allUniqueDays = [...new Set(allDays)]//.map(item=>{return{dayNumber:item}});
-
-      console.log({ allUniqueDays });
-      updateDayList(allUniqueDays);
+      cbUpdateReminders(result);
     } catch (error) {}
   };
   useEffect(() => {
@@ -31,7 +25,7 @@ export default function DaysListView() {
     <Grid container spacing={6}>
       {days?.map((day, index) => (
         <Grid size={12 / days.length}>
-          <DayBox key={index} day={day} updateDayList={updateDayList} />
+          <DayBox key={index} day={day} cbUpdateReminders={cbUpdateReminders} />
         </Grid>
       ))}
     </Grid>
