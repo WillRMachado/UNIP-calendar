@@ -8,6 +8,29 @@ require("dotenv").config();
 const Reminder = require("./schemas/reminders.js");
 app.use(cors());
 
+const dbInitVal = [
+  {
+    dayName: "segunda",
+    reminders: [],
+  },
+  {
+    dayName: "terca",
+    reminders: [],
+  },
+  {
+    dayName: "quarta",
+    reminders: [],
+  },
+  {
+    dayName: "quinta",
+    reminders: [],
+  },
+  {
+    dayName: "sexta",
+    reminders: [],
+  },
+];
+
 const PORT = 10001;
 
 const { DB_USER, DB_PASS } = process.env;
@@ -21,33 +44,41 @@ async function saveEvent(event) {
     const reminder = Reminder;
 
     const a = await reminder.findOneAndUpdate(
-      { dayNumber: event.day.dayNumber },
+      { dayName: event.day.dayName },
       { reminders: [...event.day.reminders, event.value] },
       { returnOriginal: false }
     );
 
-    const resultFinal = await listReminders()
+    const resultFinal = await listReminders();
     console.log({ a });
     return resultFinal;
-    // const newReminder = new Reminder({
-    //   dayNumber: 28,
-    //   monthNumber: 10,
-    //   yearNumber: 2023,
-    //   reminderText: "Teste",
-    // });
-    // await newReminder.save();
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
   } finally {
     mongoose.connection.close();
   }
 }
 
+const initialiseDb = async () => {
+  try {
+    await mongoose.connect(uri);
+
+    const reminder = Reminder;
+    const a = await reminder.insertMany(dbInitVal); //.create();
+    console.log({ a });
+  } catch (error) {
+  } finally {
+    mongoose.connection.close();
+  }
+};
 const listReminders = async () => {
   try {
     await mongoose.connect(uri);
     const reminders = await Reminder.find();
+    console.log({ reminders });
+    if (reminders.length === 0) {
+      mongoose.connection.close();
+      await initialiseDb();
+      return await listReminders();
+    }
     return reminders;
   } catch (error) {
   } finally {

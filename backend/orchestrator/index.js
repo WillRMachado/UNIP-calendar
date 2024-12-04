@@ -9,35 +9,18 @@ const eventos = [{ number: 28 }];
 app.use(cors());
 
 const saveReminder = async (event) => {
-  const response = await axios.post("http://localhost:10001/list-reminders", event);
+  const response = await axios.post(
+    "http://localhost:10001/list-reminders",
+    event
+  );
 
-
-  return response.data
+  return response.data;
 };
-
-// PLrGm1BMmvLJ5MIU
 
 app.post("/eventos", async (req, res) => {
   const evento = req.body;
   const result = await saveReminder(evento);
   res.json(result);
-  //envia o evento para o microsserviço de lembretes
-  //   try {
-  //     await axios.post("http://localhost:4000/eventos", evento);
-  //   } catch (e) {}
-  //   //envia o evento para o microsserviço de observações
-  //   try {
-  //     await axios.post("http://localhost:5000/eventos", evento);
-  //   } catch (e) {}
-  //   //envia o evento para o microsserviço de consulta
-  //   try {
-  //     await axios.post("http://localhost:6001/eventos", evento);
-  //   } catch (e) {}
-  //   //envia o evento para o microsserviço de classificação
-  //   try {
-  //     await axios.post("http://localhost:7000/eventos", evento);
-  //   } catch (e) {}
-  //   res.send({ msg: "ok" });
 });
 
 app.get("/list-reminders", async (req, res) => {
@@ -46,7 +29,18 @@ app.get("/list-reminders", async (req, res) => {
 
     res.json(resp.data);
   } catch (error) {}
-  //   res.send(eventos);
+});
+
+app.post("/get-ai-comment", async (req, res) => {
+  try {
+    console.log({ req: req.body });
+    const resp = await axios.post(
+      "http://localhost:10002/get-ai-comment",
+      req?.body
+    );
+    console.log({ resp:resp.data.comment });
+    res.json(resp.data.comment);
+  } catch (error) {}
 });
 
 app.listen(10000, () => console.log("Barramento de eventos. Porta 10000."));

@@ -15,6 +15,7 @@ export default function DaysListView() {
       const resp = await axios.get("http://localhost:10000/list-reminders");
       const result = resp.data;
 
+      console.log({ result });
       cbUpdateReminders(result);
     } catch (error) {}
   };
@@ -24,7 +25,7 @@ export default function DaysListView() {
   return (
     <Grid container spacing={6}>
       {days?.map((day, index) => (
-        <Grid size={12 / days.length}>
+        <Grid sx={{ mb: 10 }} size={12 / days.length}>
           <DayBox key={index} day={day} cbUpdateReminders={cbUpdateReminders} />
         </Grid>
       ))}
