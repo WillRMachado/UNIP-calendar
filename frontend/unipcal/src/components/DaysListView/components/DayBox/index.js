@@ -1,43 +1,13 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Grid2 as Grid,
-  Paper,
-  TextField,
-  Box,
-  debounce,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { AccountCircle, SmartToy } from "@mui/icons-material";
-import DebounceInput from "../../../DaboucedInput";
+import { Box } from "@mui/material";
+import { SmartToy } from "@mui/icons-material";
+import DebounceInput from "../../../DeboucedInput";
 import axios from "axios";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-  }),
-}));
-const ItemAI = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#aaa",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-  }),
-}));
+import { Item } from "../../../ItemSpot";
 
 export default function DayBox({ day, cbUpdateReminders }) {
   const [editValue, setEditValue] = useState("");
   const [aiComments, setAiComments] = useState("");
-
-  console.log({ day });
 
   const generateAiComment = async () => {
     try {
@@ -47,24 +17,20 @@ export default function DayBox({ day, cbUpdateReminders }) {
           reminders: day.reminders,
         }
       );
-      console.log({ response });
       setAiComments(response.data.content);
     } catch (error) {
     } finally {
     }
   };
   const handleChange = async (value, field) => {
-    console.log({ value, field, day });
-
     try {
-      const a = await axios.post("http://localhost:10000/eventos", {
+      const response = await axios.post("http://localhost:10000/eventos", {
         value,
         field,
         day,
       });
 
-      cbUpdateReminders(a.data);
-      console.log({ a });
+      cbUpdateReminders(response.data);
     } catch (error) {
     } finally {
       setEditValue("");
@@ -87,7 +53,9 @@ export default function DayBox({ day, cbUpdateReminders }) {
               sx={{ color: "action.active", mr: 1, my: 0.5 }}
             />
           ) : (
-            <ItemAI sx={{ padding: 2, margin: 2 }}>{aiComments}</ItemAI>
+            <Item isDark sx={{ padding: 2, margin: 2 }}>
+              {aiComments}
+            </Item>
           )}
         </Box>
       </>
@@ -99,7 +67,6 @@ export default function DayBox({ day, cbUpdateReminders }) {
             justifyContent: "center",
           }}
         >
-          {/* <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} /> */}
           <DebounceInput
             debounceTimeout={1000}
             sx={{
@@ -120,7 +87,6 @@ export default function DayBox({ day, cbUpdateReminders }) {
           justifyContent: "center",
         }}
       >
-        {/* <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} /> */}
         <DebounceInput
           debounceTimeout={1000}
           handleDebounce={(value) => handleChange(value, DayBox)}
