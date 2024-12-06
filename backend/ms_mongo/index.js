@@ -43,14 +43,14 @@ async function saveEvent(event) {
     await mongoose.connect(uri);
     const reminder = Reminder;
 
-    const a = await reminder.findOneAndUpdate(
+    const response = await reminder.findOneAndUpdate(
       { dayName: event.day.dayName },
       { reminders: [...event.day.reminders, event.value] },
       { returnOriginal: false }
     );
 
     const resultFinal = await listReminders();
-    console.log({ a });
+    console.log({ a: response });
     return resultFinal;
   } finally {
     mongoose.connection.close();

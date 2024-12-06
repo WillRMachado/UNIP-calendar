@@ -17,6 +17,18 @@ app.post("/list-reminders", async (req, res) => {
 });
 
 app.post("/get-ai-comment", async (req, res) => {
+  if (req.body.reminders.length <= 0) {
+    res.json({
+      comment: {
+        role: "assistant",
+        refusal: null,
+        content:
+          "Parece que não há nada aqui, tente popular a agenda para que nossa Ia faça os devidos comentários",
+      },
+    });
+    return;
+  }
+
   const completion = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
@@ -30,10 +42,6 @@ app.post("/get-ai-comment", async (req, res) => {
           .map((r) => r.value)
           .join(", ")}`,
       },
-      // {
-      //   role: "user",
-      //   content: req.body.reminders.map((r) => r.value).join(", "),
-      // },
     ],
   });
 
