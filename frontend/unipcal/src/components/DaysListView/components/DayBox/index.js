@@ -37,8 +37,19 @@ export default function DayBox({ day, cbUpdateReminders }) {
     }
   };
   return (
-    <>
-      <Item sx={{ padding: 2, margin: 2 }}>{`${day.dayName}`}</Item>
+    <Box
+      sx={{
+        border: 1,
+        borderRadius: 1,
+        padding: 1,
+        margin: 1,
+        borderColor: "#eee",
+      }}
+    >
+      <Item
+        isHeader
+        sx={{ padding: 2, margin: 2 }}
+      >{`${day.dayName.toUpperCase()}`}</Item>
       <>
         <Box
           sx={{
@@ -68,9 +79,10 @@ export default function DayBox({ day, cbUpdateReminders }) {
           }}
         >
           <DebounceInput
+            disabled
             debounceTimeout={1000}
             sx={{
-              backgroundColor: "#aaa",
+              backgroundColor: "#dfdfdf",
               margin: 1,
             }}
             onChange={() => {}}
@@ -94,6 +106,6 @@ export default function DayBox({ day, cbUpdateReminders }) {
           onChange={(e) => setEditValue(e.target.value)}
         />
       </Box>
-    </>
+    </Box>
   );
 }

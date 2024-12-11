@@ -25,7 +25,16 @@ export default function DaysListView() {
   return (
     <Grid container spacing={6}>
       {days?.map((day, index) => (
-        <Grid sx={{ mb: 10 }} size={12 / days.length}>
+        <Grid
+          sx={{ mb: 10 }}
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4,
+            lg: 12 / (days.length - 2),
+            xl: 12 / days.length,
+          }}
+        >
           <DayBox key={index} day={day} cbUpdateReminders={cbUpdateReminders} />
         </Grid>
       ))}

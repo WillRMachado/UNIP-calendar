@@ -13,5 +13,12 @@ export default function DebounceInput(props) {
     }, debounceTimeout);
   };
 
-  return <TextField {...other} value={props.item} onChange={handleChange} />;
+  return (
+    <TextField
+      size="small"
+      {...other}
+      value={props.item}
+      onChange={handleChange}
+    />
+  );
 }
