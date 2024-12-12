@@ -45,7 +45,6 @@ app.get("/list-reminders", async (req, res) => {
 
 app.post("/get-ai-comment", async (req, res) => {
   try {
-    console.log({ req: req.body });
     const resp = await axios.post(
       "http://localhost:10002/get-ai-comment",
       req?.body

@@ -1,29 +1,14 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import { SmartToy, Delete } from "@mui/icons-material";
 import DebounceInput from "../../../DeboucedInput";
 import axios from "axios";
 import { ItemTextDisplay } from "../../../ItemTextDisplay";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
+import DayListAi from "../DayListAi";
+import DayListRemindersFixed from "../DayListRemindersFixed";
 
 export default function DayBox({ day, cbUpdateReminders }) {
   const [editValue, setEditValue] = useState("");
-  const [aiComments, setAiComments] = useState("");
 
-  const generateAiComment = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:10000/get-ai-comment",
-        {
-          reminders: day.reminders,
-        }
-      );
-      setAiComments(response.data.content);
-    } catch (error) {
-    } finally {
-    }
-  };
   const handleChange = async (value, field) => {
     try {
       const response = await axios.post("http://localhost:10000/eventos", {
@@ -38,18 +23,7 @@ export default function DayBox({ day, cbUpdateReminders }) {
       setEditValue("");
     }
   };
-  const handleDelete = async (id, index) => {
-    try {
-      console.log({ id, index });
-      const response = await axios.delete(
-        `http://localhost:10000/eventos/${id}/${index}`
-      );
 
-      cbUpdateReminders(response.data);
-    } catch (error) {
-    } finally {
-    }
-  };
   return (
     <Box
       sx={{
@@ -60,64 +34,19 @@ export default function DayBox({ day, cbUpdateReminders }) {
         borderColor: "#eee",
       }}
     >
-      <ItemTextDisplay
-        isHeader
-        sx={{ padding: 2, margin: 2 }}
-      >{`${day.dayName.toUpperCase()}`}</ItemTextDisplay>
-      <>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {!aiComments ? (
-            <SmartToy
-              onClick={() => generateAiComment()}
-              sx={{ color: "action.active", mr: 1, my: 0.5 }}
-            />
-          ) : (
-            <ItemTextDisplay isDark sx={{ padding: 2, margin: 2 }}>
-              {aiComments}
-            </ItemTextDisplay>
-          )}
-        </Box>
-      </>
+      <ItemTextDisplay isHeader sx={{ padding: 2, margin: 2 }}>
+        {`${day.dayName.toUpperCase()}`}
+      </ItemTextDisplay>
+
+      <DayListAi day={day} />
+
       {day.reminders.map((item, index) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <DebounceInput
-            disabled
-            debounceTimeout={1000}
-            sx={{
-              backgroundColor: "#dfdfdf",
-              margin: 1,
-            }}
-            onChange={() => {}}
-            handleDebounce={() => {}}
-            item={item}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => handleDelete(day._id, index)}
-                      edge="end"
-                    >
-                      <Delete />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Box>
+        <DayListRemindersFixed
+          item={item}
+          cbUpdateReminders={cbUpdateReminders}
+          index={index}
+          day={day}
+        />
       ))}
 
       <Box
