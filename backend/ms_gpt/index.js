@@ -11,8 +11,6 @@ const openai = new OpenAI();
 const PORT = 10002;
 
 app.post("/list-reminders", async (req, res) => {
-  console.log({ req });
-  console.log({ result });
   res.send("result");
 });
 
@@ -45,8 +43,6 @@ app.post("/get-ai-comment", async (req, res) => {
     ],
   });
 
-  console.log({ req: req.body });
-  console.log({ completion: JSON.stringify(completion.choices) });
   res.json({ comment: completion.choices[0].message });
 });
 

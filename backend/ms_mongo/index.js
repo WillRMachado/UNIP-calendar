@@ -42,7 +42,6 @@ async function saveEvent(event) {
     await mongoose.connect(uri);
     const reminder = Reminder;
 
-    console.log({ event });
     const response = await reminder.findOneAndUpdate(
       { dayName: event.day.dayName },
       { reminders: [...event.day.reminders, event.value] },
@@ -68,7 +67,6 @@ async function deleteEvent(id, index) {
       { reminders: remindersList },
       { returnOriginal: false }
     );
-    console.log("res", response);
 
     const resultFinal = await listReminders();
     return resultFinal;
@@ -101,7 +99,6 @@ const listReminders = async () => {
   } catch (error) {
     console.log({ error });
   } finally {
-    console.log("call");
     // mongoose.connection.close();
   }
 };

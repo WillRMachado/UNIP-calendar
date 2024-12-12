@@ -2,22 +2,21 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { SmartToy } from "@mui/icons-material";
 import { ItemTextDisplay } from "../../../ItemTextDisplay";
-import axios from "axios";
+import remindersService from "../../../../services/reminders";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function DayListAi({ day }) {
   const [aiComments, setAiComments] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const generateAiComment = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:10000/get-ai-comment",
-        {
-          reminders: day.reminders,
-        }
-      );
+      setIsLoading(true);
+      const response = await remindersService.getAiComment(day.reminders);
       setAiComments(response.data.content);
     } catch (error) {
     } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -29,10 +28,16 @@ export default function DayListAi({ day }) {
       }}
     >
       {!aiComments ? (
-        <SmartToy
-          onClick={() => generateAiComment()}
-          sx={{ color: "action.active", mr: 1, my: 0.5 }}
-        />
+        <>
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <SmartToy
+              onClick={() => generateAiComment()}
+              sx={{ color: "action.active", mr: 1, my: 0.5 }}
+            />
+          )}
+        </>
       ) : (
         <ItemTextDisplay isDark sx={{ padding: 2, margin: 2 }}>
           {aiComments}

@@ -1,10 +1,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import axios from "axios";
 import DebounceInput from "../../../DeboucedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
+import remindersService from "../../../../services/reminders";
 
 export default function DayListRemindersFixed({
   item,
@@ -14,10 +14,7 @@ export default function DayListRemindersFixed({
 }) {
   const handleDelete = async (id, index) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:10000/eventos/${id}/${index}`
-      );
-
+      const response = await remindersService.deleteReminder(id, index);
       cbUpdateReminders(response.data);
     } catch (error) {
     } finally {

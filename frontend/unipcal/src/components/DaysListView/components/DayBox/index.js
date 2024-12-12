@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import DebounceInput from "../../../DeboucedInput";
-import axios from "axios";
 import { ItemTextDisplay } from "../../../ItemTextDisplay";
 import DayListAi from "../DayListAi";
 import DayListRemindersFixed from "../DayListRemindersFixed";
+import remindersService from "../../../../services/reminders";
 
 export default function DayBox({ day, cbUpdateReminders }) {
   const [editValue, setEditValue] = useState("");
 
   const handleChange = async (value, field) => {
     try {
-      const response = await axios.post("http://localhost:10000/eventos", {
-        value,
-        field,
-        day,
-      });
+      const response = await remindersService.addReminder(value, field, day);
 
       cbUpdateReminders(response.data);
     } catch (error) {

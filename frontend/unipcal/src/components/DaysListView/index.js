@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Grid2 as Grid } from "@mui/material";
 import DayBox from "./components/DayBox";
-import axios from "axios";
+import remindersService from "../../services/reminders";
 
 export default function DaysListView() {
   const [days, setDays] = useState([]);
 
   const cbUpdateReminders = (NewDayList) => {
-    console.log({ NewDayList });
     setDays(NewDayList);
   };
   const fetchReminders = async () => {
     try {
-      const resp = await axios.get("http://localhost:10000/list-reminders");
-      const result = resp.data;
+      const response = await remindersService.fetchReminders();
+      const result = response.data;
 
-      console.log({ result });
       cbUpdateReminders(result);
     } catch (error) {}
   };
