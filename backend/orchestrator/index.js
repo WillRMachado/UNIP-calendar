@@ -49,7 +49,6 @@ app.post("/get-ai-comment", async (req, res) => {
       "http://localhost:10002/get-ai-comment",
       req?.body
     );
-    console.log({ resp: resp.data.comment });
     res.json(resp.data.comment);
   } catch (error) {}
 });
