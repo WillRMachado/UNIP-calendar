@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import { SmartToy } from "@mui/icons-material";
+import { SmartToy, Delete } from "@mui/icons-material";
 import DebounceInput from "../../../DeboucedInput";
 import axios from "axios";
-import { Item } from "../../../ItemSpot";
+import { ItemTextDisplay } from "../../../ItemTextDisplay";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
 
 export default function DayBox({ day, cbUpdateReminders }) {
   const [editValue, setEditValue] = useState("");
@@ -36,6 +38,18 @@ export default function DayBox({ day, cbUpdateReminders }) {
       setEditValue("");
     }
   };
+  const handleDelete = async (id, index) => {
+    try {
+      console.log({ id, index });
+      const response = await axios.delete(
+        `http://localhost:10000/eventos/${id}/${index}`
+      );
+
+      cbUpdateReminders(response.data);
+    } catch (error) {
+    } finally {
+    }
+  };
   return (
     <Box
       sx={{
@@ -46,10 +60,10 @@ export default function DayBox({ day, cbUpdateReminders }) {
         borderColor: "#eee",
       }}
     >
-      <Item
+      <ItemTextDisplay
         isHeader
         sx={{ padding: 2, margin: 2 }}
-      >{`${day.dayName.toUpperCase()}`}</Item>
+      >{`${day.dayName.toUpperCase()}`}</ItemTextDisplay>
       <>
         <Box
           sx={{
@@ -64,9 +78,9 @@ export default function DayBox({ day, cbUpdateReminders }) {
               sx={{ color: "action.active", mr: 1, my: 0.5 }}
             />
           ) : (
-            <Item isDark sx={{ padding: 2, margin: 2 }}>
+            <ItemTextDisplay isDark sx={{ padding: 2, margin: 2 }}>
               {aiComments}
-            </Item>
+            </ItemTextDisplay>
           )}
         </Box>
       </>
@@ -88,6 +102,20 @@ export default function DayBox({ day, cbUpdateReminders }) {
             onChange={() => {}}
             handleDebounce={() => {}}
             item={item}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => handleDelete(day._id, index)}
+                      edge="end"
+                    >
+                      <Delete />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Box>
       ))}

@@ -17,6 +17,7 @@ export default function DebounceInput(props) {
     <TextField
       size="small"
       {...other}
+      multiline
       value={props.item}
       onChange={handleChange}
     />

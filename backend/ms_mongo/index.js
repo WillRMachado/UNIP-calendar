@@ -42,11 +42,33 @@ async function saveEvent(event) {
     await mongoose.connect(uri);
     const reminder = Reminder;
 
+    console.log({ event });
     const response = await reminder.findOneAndUpdate(
       { dayName: event.day.dayName },
       { reminders: [...event.day.reminders, event.value] },
       { returnOriginal: false }
     );
+
+    const resultFinal = await listReminders();
+    return resultFinal;
+  } finally {
+    mongoose.connection.close();
+  }
+}
+async function deleteEvent(id, index) {
+  try {
+    await mongoose.connect(uri);
+    const reminder = Reminder;
+
+    const originalReminders = await reminder.findById(id);
+    const remindersList = originalReminders.reminders;
+    remindersList.splice(index, 1);
+    const response = await reminder.findByIdAndUpdate(
+      id,
+      { reminders: remindersList },
+      { returnOriginal: false }
+    );
+    console.log("res", response);
 
     const resultFinal = await listReminders();
     return resultFinal;
@@ -86,6 +108,12 @@ const listReminders = async () => {
 
 app.post("/list-reminders", async (req, res) => {
   const result = await saveEvent(req.body);
+  res.send(result);
+});
+app.delete("/list-reminders/:id/:index", async (req, res) => {
+  const { id, index } = req.params;
+
+  const result = await deleteEvent(id, index);
   res.send(result);
 });
 
