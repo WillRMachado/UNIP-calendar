@@ -6,6 +6,7 @@ const axios = require("axios");
 const cors = require("cors");
 require("dotenv").config();
 app.use(cors());
+validarCredenciaisAPI();
 const openai = new OpenAI();
 
 const PORT = 10002;
@@ -47,3 +48,11 @@ app.post("/get-ai-comment", async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Barramento de eventos. Porta ${PORT}.`));
+
+
+function validarCredenciaisAPI(){
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("A chave da API da OpenAI não foi encontrada. Verifique o arquivo .env.");
+    process.exit(1); // Interrompe a execução do código
+  }
+}
