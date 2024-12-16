@@ -1,0 +1,48 @@
+services:
+  ms_gpt:
+    build: ./backend/ms_gpt
+    ports:
+      - "10002:10002"
+    volumes:
+      - ./backend/ms_gpt:/usr/src/app
+    environment:
+      - NODE_ENV=development
+
+  ms_mongo:
+    build: ./backend/ms_mongo
+    ports:
+      - "10001:10001"
+    volumes:
+      - ./backend/ms_mongo:/usr/src/app
+    environment:
+      - NODE_ENV=development
+
+  orchestrator:
+    build: ./backend/orchestrator
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./backend/orchestrator:/usr/src/app
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - ms_gpt
+      - ms_mongo
+  
+  frontend:
+    build:
+      context: ./frontend/unipcal
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/unipcal:/app
+    environment:
+      - NODE_ENV=development
+    command: npm start
+    working_dir: /app
+    depends_on:
+      - ms_gpt  # O frontend pode depender do backend, se necessário
+      - ms_mongo # Se o frontend tiver dependências diretas do banco de dados
+
+volumes:
+  mongo-data:
