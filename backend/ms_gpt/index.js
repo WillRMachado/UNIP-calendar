@@ -15,16 +15,16 @@ const PORT = 10002;
 
 const validateReminders = (reminders) => {
   if (!Array.isArray(reminders)) {
-    return "O campo 'reminders' deve ser um array.";
+    return "Opa! A estutura da mensagem não está adequada!";
   }
 
   if (reminders.length === 0) {
-    return "O array 'reminders' não pode estar vazio.";
+    return "Parece que não há nada aqui. Tente popular a agenda para que nossa IA faça os devidos comentários.";
   }
 
   for (let i = 0; i < reminders.length; i++) {
     if (!reminders[i] || typeof reminders[i] !== 'string') {
-      return `Evento inválido na posição ${reminders[i]}: O campo 'value' deve ser uma string.${typeof reminders[i] }`;
+      return `Evento inválido '${reminders[i]}': O campo deve ser um texto.${typeof reminders[i] }`;
     }
   }
   return null;  
@@ -72,23 +72,19 @@ app.post("/get-ai-comment", async (req, res) => {
   // Valida os dados recebidos
   const validationError = validateReminders(reminders);
   if (validationError) {
-    return res.status(400).json({ error: validationError });
-  }
-
-  // Se a agenda está vazia, retorna um comentário padrão
-  if (reminders.length === 0) {
-    return res.json({
+    res.json({
       comment: {
         role: "assistant",
-        content: "Parece que não há nada aqui. Tente popular a agenda para que nossa IA faça os devidos comentários.",
+        content: validationError,
+        refusal: null
       },
     });
+    return;
   }
 
   try {
     // Chama a função que interage com o OpenAI para gerar o comentário
     const comment = await getAiCommentFromOpenAI(reminders);
-
     // Retorna o comentário gerado
     res.json({comment:  comment});
   } catch (error) {

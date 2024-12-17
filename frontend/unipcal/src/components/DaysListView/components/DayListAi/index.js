@@ -6,6 +6,7 @@ import remindersService from "../../../../services/reminders";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function DayListAi({ day }) {
+
   const [aiComments, setAiComments] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,6 +21,7 @@ export default function DayListAi({ day }) {
       setIsLoading(false);
     }
   };
+  
   return (
     <Box
       sx={{
