@@ -32,9 +32,8 @@ const validateReminders = (reminders) => {
 
 const getAiCommentFromOpenAI = async (reminders) => {
   try {   
-    console.log(reminders);
-    const prompt = `Considere os eventos a seguir em uma agenda, e faça uma observação de 5 a 10 palavras sobre o dia 
-    e preparo para ele: ${reminders.map((r) => r.value).join(", ")}`;
+    const prompt = `Considere os eventos a seguir em uma agenda, e faça uma observação de 5 a 10 palavras sobre o dia e preparo para ele: ${reminders.map((r) => r).join(", ")}`;
+    console.log(prompt);
 
     // Chama o modelo GPT-4 com as instruções
     const completion = await openai.chat.completions.create({
@@ -50,7 +49,7 @@ const getAiCommentFromOpenAI = async (reminders) => {
         },
       ],
     });
-    return completion.choices[0].message.content;
+    return completion.choices[0].message;
   } catch (error) {
     console.error("Erro ao chamar o OpenAI:", error);
     throw new Error("Erro ao gerar o comentário.");
@@ -65,8 +64,7 @@ app.post("/list-reminders", async (req, res) => {
 
 app.post("/get-ai-comment", async (req, res) => {
   
-  console.log(req);
-  
+ 
   const { reminders } = req.body;
 
   
@@ -92,12 +90,7 @@ app.post("/get-ai-comment", async (req, res) => {
     const comment = await getAiCommentFromOpenAI(reminders);
 
     // Retorna o comentário gerado
-    return res.json({
-      comment: {
-        role: "assistant",
-        content: comment,
-      },
-    });
+    res.json({comment:  comment});
   } catch (error) {
     // Tratamento de erro caso a chamada ao OpenAI falhe
     res.status(500).json({
