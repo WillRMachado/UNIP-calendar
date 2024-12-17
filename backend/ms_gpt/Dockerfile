@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Instalar as dependências
-RUN npm install
+RUN npm install --verbose
 
 # Copiar todo o código do microserviço
 COPY . .

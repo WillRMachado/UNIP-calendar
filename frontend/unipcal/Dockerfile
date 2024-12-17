@@ -1,4 +1,4 @@
-FROM node:22.11.0-alpine AS build
+FROM node:20.17.0-alpine as build
 
 # Definir o diretório de trabalho dentro do container
 WORKDIR /app

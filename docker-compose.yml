@@ -1,15 +1,19 @@
 services:
-  ms_gpt:
+  gpt:
     build: ./backend/ms_gpt
+    container_name: ms-gpt
     ports:
       - "10002:10002"
     volumes:
       - ./backend/ms_gpt:/usr/src/app
     environment:
       - NODE_ENV=development
+    networks:
+      - bridge-network
 
-  ms_mongo:
+  mongo:
     build: ./backend/ms_mongo
+    container_name: ms-mongo
     ports:
       - "10001:10001"
     volumes:
@@ -19,17 +23,22 @@ services:
 
   orchestrator:
     build: ./backend/orchestrator
+    container_name: ms-orquestrador
     ports:
       - "10000:10000"
     volumes:
       - ./backend/orchestrator:/usr/src/app
     environment:
+      - HOST_DOCKER=host.docker.internal
       - NODE_ENV=development
+    networks:
+      - bridge-network
     depends_on:
-      - ms_gpt
-      - ms_mongo
+      - gpt
+      - mongo
   
   frontend:
+    container_name: ms-frontend
     build:
       context: ./frontend/unipcal
     ports:
@@ -38,11 +47,20 @@ services:
       - ./frontend/unipcal:/app
     environment:
       - NODE_ENV=development
+      - REACT_APP_HOST_DOCKER=host.docker.internal
     command: npm start
     working_dir: /app
+    networks:
+      - bridge-network
     depends_on:
-      - ms_gpt  # O frontend pode depender do backend, se necessário
-      - ms_mongo # Se o frontend tiver dependências diretas do banco de dados
+      - gpt
+      - mongo
+      - orchestrator
+
 
 volumes:
   mongo-data:
+
+networks:
+  bridge-network:
+    driver: bridge

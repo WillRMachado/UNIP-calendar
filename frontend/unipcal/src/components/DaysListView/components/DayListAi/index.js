@@ -15,6 +15,7 @@ export default function DayListAi({ day }) {
       const response = await remindersService.getAiComment(day.reminders);
       setAiComments(response.data.content);
     } catch (error) {
+      console.log(`Erro: ${error}`)
     } finally {
       setIsLoading(false);
     }
