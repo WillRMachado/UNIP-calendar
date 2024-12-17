@@ -8,7 +8,7 @@ const cors = require("cors");
 require("dotenv").config();
 app.use(cors());
 validarCredenciaisAPI();
-const openai = new OpenAI();
+const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
 
 const PORT = 10002;
 
@@ -23,8 +23,8 @@ const validateReminders = (reminders) => {
   }
 
   for (let i = 0; i < reminders.length; i++) {
-    if (!reminders[i].value || typeof reminders[i].value !== 'string') {
-      return `Evento inválido na posição ${i}: O campo 'value' deve ser uma string.`;
+    if (!reminders[i] || typeof reminders[i] !== 'string') {
+      return `Evento inválido na posição ${reminders[i]}: O campo 'value' deve ser uma string.${typeof reminders[i] }`;
     }
   }
   return null;  
@@ -32,12 +32,13 @@ const validateReminders = (reminders) => {
 
 const getAiCommentFromOpenAI = async (reminders) => {
   try {   
+    console.log(reminders);
     const prompt = `Considere os eventos a seguir em uma agenda, e faça uma observação de 5 a 10 palavras sobre o dia 
     e preparo para ele: ${reminders.map((r) => r.value).join(", ")}`;
 
     // Chama o modelo GPT-4 com as instruções
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -64,7 +65,11 @@ app.post("/list-reminders", async (req, res) => {
 
 app.post("/get-ai-comment", async (req, res) => {
   
+  console.log(req);
+  
   const { reminders } = req.body;
+
+  
 
   // Valida os dados recebidos
   const validationError = validateReminders(reminders);
@@ -87,7 +92,7 @@ app.post("/get-ai-comment", async (req, res) => {
     const comment = await getAiCommentFromOpenAI(reminders);
 
     // Retorna o comentário gerado
-    res.json({
+    return res.json({
       comment: {
         role: "assistant",
         content: comment,
