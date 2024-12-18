@@ -42,6 +42,7 @@ export default function DayBox({ day, cbUpdateReminders }) {
           cbUpdateReminders={cbUpdateReminders}
           index={index}
           day={day}
+          key={index}
         />
       ))}
 

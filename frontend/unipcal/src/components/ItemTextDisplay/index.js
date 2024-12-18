@@ -1,7 +1,11 @@
 import { Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-export const ItemTextDisplay = styled(Paper)(({ isDark, isHeader, theme }) => ({
+export const ItemTextDisplay = styled(
+  Paper, {
+    shouldForwardProp: (prop) => prop !== 'isDark' && prop !== 'isHeader', 
+  })
+  (({ isDark, isHeader, theme }) => ({
   backgroundColor: isDark ? "#aaa" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
