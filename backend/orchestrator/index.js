@@ -4,6 +4,7 @@ app.use(express.json());
 const axios = require("axios");
 const cors = require("cors");
 app.use(cors());
+const { sendMessageKafka } = require('./kafka');
 
 const HOST = process.env.HOST_DOCKER;
 
@@ -46,12 +47,14 @@ app.get("/list-reminders", async (req, res) => {
 });
 
 app.post("/get-ai-comment", async (req, res) => {
-  try {
+  try {    
     const resp = await axios.post(
       `http://${HOST}:10002/get-ai-comment`,
       req?.body
     );
     res.json(resp.data.comment);
+    //Envia a recumendacao para o kafka
+    sendMessageKafka(resp.data.comment).catch(console.error);
   } catch (error) {}
 });
 

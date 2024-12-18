@@ -9,6 +9,35 @@ require("dotenv").config();
 app.use(cors());
 validarCredenciaisAPI();
 const openai = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
+const { Kafka } = require('kafkajs');
+
+
+const kafka = new Kafka({
+  clientId: 'gpt',
+  brokers: ['kafka:9092'],
+});
+const consumer = kafka.consumer({ groupId: 'grupo-consumo-gpt' });
+
+const consumeMensagensKafka = async () => {
+  let consumedMessage = null; 
+  await consumer.connect();
+  await consumer.subscribe({ topic: 'unip-prova'});
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      console.log(`Mensagem recebida: ${message}`);
+      await consumer.disconnect();
+      //Requisicao
+      const resp = await axios.post(
+        `http://${HOST}:10002/get-ai-comment`,
+        message
+      );
+      res.json(resp.data.comment);     
+    },
+  });
+  return consumedMessage;
+};
+
+
 
 const PORT = 10002;
 
@@ -36,20 +65,24 @@ const getAiCommentFromOpenAI = async (reminders) => {
     console.log(prompt);
 
     // Chama o modelo GPT-4 com as instruções
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `Sua única função é fazer comentários sobre o dia. Não devem ser feitas inferências ou listagens. Não comente sobre reuniões de trabalho, apenas sobre o dia com expressões como: "Dia corrido, considere separar a roupa antecipadamente."`,
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
-    return completion.choices[0].message;
+    // const completion = await openai.chat.completions.create({
+    //   model: "gpt-4o-mini",
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content: `Sua única função é fazer comentários sobre o dia. Não devem ser feitas inferências ou listagens. Não comente sobre reuniões de trabalho, apenas sobre o dia com expressões como: "Dia corrido, considere separar a roupa antecipadamente."`,
+    //     },
+    //     {
+    //       role: "user",
+    //       content: prompt,
+    //     },
+    //   ],
+    // });
+    return {
+        role: "assistant",
+        content: "OK, deu certo!",
+        refusal: null
+    }; //completion.choices[0].message;
   } catch (error) {
     console.error("Erro ao chamar o OpenAI:", error);
     throw new Error("Erro ao gerar o comentário.");
