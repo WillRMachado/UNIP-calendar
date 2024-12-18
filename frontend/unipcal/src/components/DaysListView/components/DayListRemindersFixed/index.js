@@ -12,6 +12,8 @@ export default function DayListRemindersFixed({
   index,
   day,
 }) {
+  
+  //Funcao para deletar o lembrete
   const handleDelete = async (id, index) => {
     try {
       const response = await remindersService.deleteReminder(id, index);

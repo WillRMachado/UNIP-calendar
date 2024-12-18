@@ -9,6 +9,7 @@ import remindersService from "../../../../services/reminders";
 export default function DayBox({ day, cbUpdateReminders }) {
   const [editValue, setEditValue] = useState("");
 
+  //Add Lembrete
   const handleChange = async (value, field) => {
     try {
       const response = await remindersService.addReminder(value, field, day);
@@ -34,7 +35,7 @@ export default function DayBox({ day, cbUpdateReminders }) {
         {`${day.dayName.toUpperCase()}`}
       </ItemTextDisplay>
 
-      <DayListAi day={day} />
+      <DayListAi day={day} key={day._id}/>
 
       {day.reminders.map((item, index) => (
         <DayListRemindersFixed
@@ -42,6 +43,7 @@ export default function DayBox({ day, cbUpdateReminders }) {
           cbUpdateReminders={cbUpdateReminders}
           index={index}
           day={day}
+          key={index}
         />
       ))}
 

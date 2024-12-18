@@ -6,6 +6,7 @@ import remindersService from "../../../../services/reminders";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function DayListAi({ day }) {
+
   const [aiComments, setAiComments] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,10 +16,12 @@ export default function DayListAi({ day }) {
       const response = await remindersService.getAiComment(day.reminders);
       setAiComments(response.data.content);
     } catch (error) {
+      console.log(`Erro: ${error}`)
     } finally {
       setIsLoading(false);
     }
   };
+  
   return (
     <Box
       sx={{
@@ -32,6 +35,7 @@ export default function DayListAi({ day }) {
           {isLoading ? (
             <CircularProgress />
           ) : (
+            //Icone que no Clique gera o cometário da IA
             <SmartToy
               onClick={() => generateAiComment()}
               sx={{ color: "action.active", mr: 1, my: 0.5 }}
