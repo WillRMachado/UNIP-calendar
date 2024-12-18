@@ -9,6 +9,7 @@ import remindersService from "../../../../services/reminders";
 export default function DayBox({ day, cbUpdateReminders }) {
   const [editValue, setEditValue] = useState("");
 
+  //Add Lembrete
   const handleChange = async (value, field) => {
     try {
       const response = await remindersService.addReminder(value, field, day);

@@ -64,25 +64,27 @@ const getAiCommentFromOpenAI = async (reminders) => {
     const prompt = `Considere os eventos a seguir em uma agenda, e faça uma observação de 5 a 10 palavras sobre o dia e preparo para ele: ${reminders.map((r) => r).join(", ")}`;
     console.log(prompt);
 
-    // Chama o modelo GPT-4 com as instruções
-    // const completion = await openai.chat.completions.create({
-    //   model: "gpt-4o-mini",
-    //   messages: [
-    //     {
-    //       role: "system",
-    //       content: `Sua única função é fazer comentários sobre o dia. Não devem ser feitas inferências ou listagens. Não comente sobre reuniões de trabalho, apenas sobre o dia com expressões como: "Dia corrido, considere separar a roupa antecipadamente."`,
-    //     },
-    //     {
-    //       role: "user",
-    //       content: prompt,
-    //     },
-    //   ],
-    // });
-    return {
-        role: "assistant",
-        content: "OK, deu certo!",
-        refusal: null
-    }; //completion.choices[0].message;
+    //Chama o modelo GPT-4 com as instruções
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `Sua única função é fazer comentários sobre o dia. Não devem ser feitas inferências ou listagens. Não comente sobre reuniões de trabalho, apenas sobre o dia com expressões como: "Dia corrido, considere separar a roupa antecipadamente."`,
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+    // return {
+    //     role: "assistant",
+    //     content: "OK, deu certo!",
+    //     refusal: null
+    // };
+    return completion.choices[0].message;     
+
   } catch (error) {
     console.error("Erro ao chamar o OpenAI:", error);
     throw new Error("Erro ao gerar o comentário.");

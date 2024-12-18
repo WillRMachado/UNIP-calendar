@@ -35,6 +35,7 @@ export default function DayListAi({ day }) {
           {isLoading ? (
             <CircularProgress />
           ) : (
+            //Icone que no Clique gera o cometário da IA
             <SmartToy
               onClick={() => generateAiComment()}
               sx={{ color: "action.active", mr: 1, my: 0.5 }}
