@@ -34,7 +34,7 @@ export default function DayBox({ day, cbUpdateReminders }) {
         {`${day.dayName.toUpperCase()}`}
       </ItemTextDisplay>
 
-      <DayListAi day={day} />
+      <DayListAi day={day} key={day._id}/>
 
       {day.reminders.map((item, index) => (
         <DayListRemindersFixed

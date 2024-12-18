@@ -22,8 +22,9 @@ export default function DaysListView() {
   }, []);
   return (
     <Grid container spacing={6}>
-      {days?.map((day, index) => (
+      {days?.map((day, index) => (       
         <Grid
+          key={day._id}
           sx={{ mb: 10 }}
           size={{
             xs: 12,
@@ -33,7 +34,7 @@ export default function DaysListView() {
             xl: 12 / days.length,
           }}
         >
-          <DayBox key={index} day={day} cbUpdateReminders={cbUpdateReminders} />
+          <DayBox key={day._id} day={day} cbUpdateReminders={cbUpdateReminders} />
         </Grid>
       ))}
     </Grid>
